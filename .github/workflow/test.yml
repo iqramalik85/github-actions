@@ -1,0 +1,47 @@
+name: Test Suite
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_call:
+
+jobs:
+  test_basic:
+    runs-on: ubuntu-latest
+    name: Basic Usage
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Test deployment marker
+        uses: ./
+        env:
+          NEW_RELIC_ACCOUNT_ID: ${{ secrets.NEW_RELIC_ACCOUNT_ID }}
+          NEW_RELIC_SERVICE_NAME: github-action-integration-test|deployment-marker
+        with:
+          apiKey: ${{ secrets.NEW_RELIC_API_KEY }}
+          guid: ${{ secrets.NEW_RELIC_DEPLOYMENT_ENTITY_GUID }}
+          version: "deployment-marker-action-basic-test:${{ github.ref }}"
+
+  test_all_inputs:
+    runs-on: ubuntu-latest
+    name: All Inputs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Test deployment marker
+        uses: ./
+        env:
+          NEW_RELIC_ACCOUNT_ID: ${{ secrets.NEW_RELIC_ACCOUNT_ID }}
+          NEW_RELIC_SERVICE_NAME: github-action-integration-test|deployment-marker
+        with:
+          apiKey: ${{ secrets.NEW_RELIC_API_KEY }}
+          guid: ${{ secrets.NEW_RELIC_DEPLOYMENT_ENTITY_GUID }}
+          version: "deployment-marker-action-all-input-test-${{ github.sha }}"
+          # Optional params
+          changelog: "See https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md for details"
+          description: "Automated Deployment via Github Actions"
+          region: ${{ secrets.NEW_RELIC_REGION }}
+          user: "hardcoded-test-username"
